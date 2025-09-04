@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        includeBuild("gradle/build-logic")
         maven("https://maven.myket.ir")
         google()
         mavenCentral()

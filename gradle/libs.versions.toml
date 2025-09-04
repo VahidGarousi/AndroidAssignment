@@ -1,6 +1,10 @@
 [versions]
+androidMinSdk = "23"
+androidTargetSdk = "36"
+androidCompileSdk = "36"
 androidGradlePlugin = "8.13.0"
 androidxActivity = "1.10.1"
+androidTools = "31.13.0"
 androidxComposeBom = "2025.08.01"
 androidxAppCompat = "1.7.1"
 androidxCore = "1.17.0"
@@ -15,6 +19,7 @@ jackson = "2.19.2"
 mockfit = "2.0.0"
 kotlin = "2.2.10"
 ksp = "2.2.10-2.0.2"
+sortDependencies = "0.15"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -36,6 +41,8 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom-alpha",
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 
 
 
@@ -55,6 +62,15 @@ jackson-datatype-joda = { group = "com.fasterxml.jackson.datatype", name = "jack
 jackson-datatype-json-org = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-json-org", version.ref = "jackson" }
 
 
+
+# Dependencies of the included build-logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
+compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -63,3 +79,13 @@ android-library = { id = "com.android.library", version.ref = "androidGradlePlug
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+square-sort-dependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
+
+
+# Plugins defined by this project
+miare-android-application = { id = "miare.android.application" }
+miare-android-application-compose = { id = "miare.android.application.compose" }
+miare-android-library = { id = "miare.android.library" }
+miare-android-library-compose = { id = "miare.android.library.compose" }
+miare-jvm-library = { id = "miare.jvm.library" }
+miare-hilt = { id = "miare.hilt" }
