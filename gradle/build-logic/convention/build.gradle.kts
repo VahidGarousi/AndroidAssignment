@@ -73,6 +73,10 @@ gradlePlugin {
             id = libs.plugins.miare.feature.domain.get().pluginId
             implementationClass = "CleanArchitectureDomainLayerConventionPlugin"
         }
+        register("cleanArchitectureDataLayer") {
+            id = libs.plugins.miare.feature.data.get().pluginId
+            implementationClass = "CleanArchitectureDataLayerConventionPlugin"
+        }
     }
 }
 
