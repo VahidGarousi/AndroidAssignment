@@ -10,6 +10,7 @@ class CleanArchitectureDomainLayerConventionPlugin : Plugin<Project> {
         dependencies {
             // TODO: add core modules in here later
             add("implementation", project(":core:common"))
+            add("implementation", project(":core:domain"))
         }
     }
 }

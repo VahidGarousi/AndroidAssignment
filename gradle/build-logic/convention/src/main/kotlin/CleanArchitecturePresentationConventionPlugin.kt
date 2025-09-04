@@ -14,6 +14,7 @@ class CleanArchitecturePresentationConventionPlugin : Plugin<Project> {
         dependencies {
             // TODO: add core modules in here later
             "implementation"(project(":core:common"))
+            "implementation"(project(":core:domain"))
             "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
             "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
             "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())

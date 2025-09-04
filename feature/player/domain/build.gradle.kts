@@ -1,3 +1,3 @@
 plugins {
-    alias(libs.plugins.miare.jvm.library)
+    alias(libs.plugins.miare.feature.domain)
 }
