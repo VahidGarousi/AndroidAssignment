@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 rootProject.name = "AndroidCodeChallenge"
 include (":app")
 include(":feature:player:presentation")
+include(":feature:player:domain")

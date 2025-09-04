@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.mockfit.runtime)
+    implementation(projects.feature.player.presentation)
 
     testImplementation(libs.junit5.api)
     testImplementation(libs.junit5.params)
@@ -57,6 +58,4 @@ dependencies {
 
     ksp(libs.hilt.compiler)
     ksp(libs.mockfit.compiler)
-
-    implementation(projects.feature.player.presentation)
 }

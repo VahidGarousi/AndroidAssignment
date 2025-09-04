@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.mockfit.runtime)
+    implementation(projects.feature.player.domain)
 
     testImplementation(libs.junit5.api)
     testImplementation(libs.junit5.params)
