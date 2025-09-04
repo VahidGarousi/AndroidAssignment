@@ -17,8 +17,6 @@ kotlinxSerializationJson = "1.9.0"
 hilt = "2.57.1"
 hiltExt = "1.2.0"
 robolectric = "4.16"
-jackson = "2.19.2"
-mockfit = "2.0.0"
 kotlin = "2.2.10"
 ksp = "2.2.10-2.0.2"
 sortDependencies = "0.15"
@@ -26,6 +24,7 @@ kotest = "5.9.1"
 junit5 = "5.13.4"
 androidxTestCore = "1.7.0"
 androidxTestExt = "1.3.0"
+secrets = "2.0.1"
 androidxTestRules = "1.7.0"
 androidxTestRunner = "1.7.0"
 junit = "4.13.2"
@@ -33,6 +32,10 @@ junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 material = "1.10.0"
 turbine = "1.2.1"
+okhttp = "5.1.0"
+retrofit = "3.0.0"
+retrofitKotlinxSerializationJson = "1.0.0"
+mockk = "1.14.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -48,7 +51,9 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
-
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-kotlin-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
@@ -76,15 +81,9 @@ hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.r
 hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 
 
-mockfit-runtime = { group = "com.github.javaherisaber.MockFit", name = "runtime", version.ref = "mockfit" }
-mockfit-compiler = { group = "com.github.javaherisaber.MockFit", name = "compiler", version.ref = "mockfit" }
-
-
-jackson-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
-jackson-datatype-joda = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-joda", version.ref = "jackson" }
-jackson-datatype-json-org = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-json-org", version.ref = "jackson" }
-
-
+# MockK
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
 # JUnit 5
 junit5-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
 junit5-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
@@ -126,6 +125,7 @@ compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 square-sort-dependencies = { id = "com.squareup.sort-dependencies", version.ref = "sortDependencies" }
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 
 
 # Plugins defined by this project

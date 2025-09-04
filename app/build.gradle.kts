@@ -24,6 +24,9 @@ android {
             )
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -41,7 +44,8 @@ dependencies {
     implementation(libs.hilt.core)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.mockfit.runtime)
+    implementation(projects.feature.player.data)
+    implementation(projects.feature.player.domain)
     implementation(projects.feature.player.presentation)
 
     testImplementation(libs.junit5.api)
@@ -57,5 +61,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
 
     ksp(libs.hilt.compiler)
-    ksp(libs.mockfit.compiler)
 }

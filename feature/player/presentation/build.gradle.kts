@@ -20,7 +20,6 @@ dependencies {
     implementation(libs.hilt.core)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.mockfit.runtime)
     implementation(projects.feature.player.domain)
 
     testImplementation(libs.junit5.api)
@@ -28,6 +27,9 @@ dependencies {
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.framework.api)
     testImplementation(libs.kotest.runner.junit5)
+    // MockK temperately
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.agent)
     testImplementation(libs.turbine)
 
     testRuntimeOnly(libs.junit5.engine)
@@ -37,5 +39,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
 
     ksp(libs.hilt.compiler)
-    ksp(libs.mockfit.compiler)
 }

@@ -1,6 +1,6 @@
 package ir.miare.feature.player.domain.model
 
-data class PlayerResponse(
+data class LeagueList(
     val league: League,
     val players: List<Player>
 )

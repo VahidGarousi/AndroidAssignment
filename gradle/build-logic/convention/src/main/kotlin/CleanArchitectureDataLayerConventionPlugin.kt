@@ -11,6 +11,7 @@ class CleanArchitectureDataLayerConventionPlugin : Plugin<Project> {
         apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
         dependencies {
             "implementation"(libs.findLibrary("hilt.android").get())
+            "implementation"(project(":core:network"))
             "implementation"(project(":core:domain"))
         }
     }
