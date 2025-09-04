@@ -27,29 +27,27 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.appcompat)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.serialization.json)
-
-
-    implementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.foundation.layout)
-    implementation(libs.androidx.compose.runtime)
-
-    implementation(libs.hilt.core)
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-
-    implementation(libs.jackson.kotlin)
+    implementation(libs.hilt.core)
     implementation(libs.jackson.datatype.joda)
     implementation(libs.jackson.datatype.json.org)
+    implementation(libs.jackson.kotlin)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.mockfit.runtime)
+
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+
+    ksp(libs.hilt.compiler)
     ksp(libs.mockfit.compiler)
 }
