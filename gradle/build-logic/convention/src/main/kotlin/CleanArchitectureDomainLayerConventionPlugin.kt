@@ -9,6 +9,7 @@ class CleanArchitectureDomainLayerConventionPlugin : Plugin<Project> {
         apply(plugin = "miare.jvm.library")
         dependencies {
             // TODO: add core modules in here later
+            add("implementation", project(":core:common"))
         }
     }
 }
