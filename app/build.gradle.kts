@@ -46,16 +46,18 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.mockfit.runtime)
 
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-
-    ksp(libs.hilt.compiler)
-    ksp(libs.mockfit.compiler)
-
     testImplementation(libs.junit5.api)
-    testRuntimeOnly(libs.junit5.engine)
     testImplementation(libs.junit5.params)
-
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.framework.api)
     testImplementation(libs.kotest.runner.junit5)
+
+    testRuntimeOnly(libs.junit5.engine)
+
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.androidx.test.runner)
+
+    ksp(libs.hilt.compiler)
+    ksp(libs.mockfit.compiler)
 }
