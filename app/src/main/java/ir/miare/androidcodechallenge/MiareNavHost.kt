@@ -4,12 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.serialization.Serializable
+import ir.miare.feature.player.presentation.navigation.PlayerBaseRoute
+import ir.miare.feature.player.presentation.navigation.player
 
-@Serializable
-data object Home
 
 @Composable
 fun MiareNavHost(
@@ -19,10 +17,8 @@ fun MiareNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Home
+        startDestination = PlayerBaseRoute
     ) {
-        composable<Home> {
-
-        }
+        player()
     }
 }
