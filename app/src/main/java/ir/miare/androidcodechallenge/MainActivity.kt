@@ -11,9 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                Surface {
-                    Text(text = "Hello Compose!")
-                }
+                MiareNavHost()
             }
         }
     }

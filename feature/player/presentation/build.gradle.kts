@@ -1,35 +1,17 @@
 plugins {
-    alias(libs.plugins.miare.android.application)
-    alias(libs.plugins.miare.android.application.compose)
+    alias(libs.plugins.miare.android.library)
+    alias(libs.plugins.miare.android.library.compose)
     alias(libs.plugins.miare.hilt)
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "ir.miare.androidcodechallenge"
-    compileSdk = 36
-    defaultConfig {
-        applicationId = "ir.miare.androidcodechallenge"
-        versionCode = 1
-        versionName = "1.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
+    namespace = "ir.miare.feature.player.presentation"
 }
+
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material3)
