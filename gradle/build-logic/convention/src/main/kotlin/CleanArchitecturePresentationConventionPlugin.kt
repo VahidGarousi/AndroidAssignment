@@ -12,6 +12,8 @@ class CleanArchitecturePresentationConventionPlugin : Plugin<Project> {
             apply("org.jetbrains.kotlin.plugin.serialization")
         }
         dependencies {
+            // TODO: add core modules in here later
+
             "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
             "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
             "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())

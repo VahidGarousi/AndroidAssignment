@@ -64,6 +64,15 @@ gradlePlugin {
             id = libs.plugins.miare.feature.presentation.get().pluginId
             implementationClass = "CleanArchitecturePresentationConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = libs.plugins.miare.jvm.library.get().pluginId
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
+
+        register("cleanArchitectureDomainLayer") {
+            id = libs.plugins.miare.feature.domain.get().pluginId
+            implementationClass = "CleanArchitectureDomainLayerConventionPlugin"
+        }
     }
 }
 

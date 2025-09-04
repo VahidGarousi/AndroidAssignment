@@ -126,3 +126,5 @@ miare-android-library-compose = { id = "miare.android.library.compose" }
 miare-jvm-library = { id = "miare.jvm.library" }
 miare-hilt = { id = "miare.hilt" }
 miare-feature-presentation = { id = "miare.feature.presentation" }
+miare-feature-domain = { id = "miare.feature.domain" }
+miare-feature-data = { id = "miare.feature.data" }
