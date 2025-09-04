@@ -1,8 +1,5 @@
 plugins {
-    alias(libs.plugins.miare.android.library)
-    alias(libs.plugins.miare.android.library.compose)
-    alias(libs.plugins.miare.hilt)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.miare.feature.presentation)
 }
 
 android {

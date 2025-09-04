@@ -60,6 +60,10 @@ gradlePlugin {
             id = libs.plugins.miare.hilt.get().pluginId
             implementationClass = "HiltConventionPlugin"
         }
+        register("cleanArchitecturePresentation") {
+            id = libs.plugins.miare.feature.presentation.get().pluginId
+            implementationClass = "CleanArchitecturePresentationConventionPlugin"
+        }
     }
 }
 

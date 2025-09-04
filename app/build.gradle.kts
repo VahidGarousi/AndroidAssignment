@@ -57,4 +57,6 @@ dependencies {
 
     ksp(libs.hilt.compiler)
     ksp(libs.mockfit.compiler)
+
+    implementation(projects.feature.player.presentation)
 }
