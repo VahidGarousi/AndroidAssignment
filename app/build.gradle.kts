@@ -50,4 +50,12 @@ dependencies {
 
     ksp(libs.hilt.compiler)
     ksp(libs.mockfit.compiler)
+
+    testImplementation(libs.junit5.api)
+    testRuntimeOnly(libs.junit5.engine)
+    testImplementation(libs.junit5.params)
+
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.framework.api)
+    testImplementation(libs.kotest.runner.junit5)
 }
