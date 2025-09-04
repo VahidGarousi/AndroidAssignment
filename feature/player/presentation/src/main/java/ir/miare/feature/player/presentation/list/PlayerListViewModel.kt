@@ -8,8 +8,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerListViewModel @Inject constructor(
-
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlayerListState())
     val uiState = _uiState.asStateFlow()
+    init {
+        getPlayers()
+    }
+
+    private fun getPlayers() {
+
+    }
 }

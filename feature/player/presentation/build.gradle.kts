@@ -27,6 +27,7 @@ dependencies {
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.framework.api)
     testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.turbine)
 
     testRuntimeOnly(libs.junit5.engine)
 
