@@ -33,13 +33,17 @@ class PlayerListViewModel @Inject constructor(
     ) { newState ->
         _uiState.update {
             it.copy(
-                paginatedLeagues =  newState
+                paginatedLeagues = newState
             )
         }
     }
 
-    init {
-        loadLeaguesNextPage()
+    fun onAction(
+        action: PlayerListAction
+    ) {
+        when (action) {
+            is PlayerListAction.LoadNextPage -> loadLeaguesNextPage()
+        }
     }
 
 
@@ -48,4 +52,10 @@ class PlayerListViewModel @Inject constructor(
             playersPaginationManager.loadNextPage()
         }
     }
+
+//    private fun refreshLeagues() {
+//        viewModelScope.launch {
+//            playersPaginationManager.refresh()
+//        }
+//    }
 }
