@@ -10,6 +10,7 @@ import ir.miare.core.domain.model.PaginatedResult
 import ir.miare.core.ui.paginator.state.PaginatedState
 import ir.miare.feature.player.domain.usecase.GetLeagueListUseCase
 import ir.miare.feature.player.domain.model.League
+import ir.miare.feature.player.domain.model.LeagueList
 import ir.miare.feature.player.presentation.list.LeagueFakeGenerator.league
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.test.runTest
@@ -41,10 +42,22 @@ internal class PlayerListViewModelTest {
         @Test
         fun `when load next page succeeds, should emit InitialLoading then Loaded`() = runTest {
             val expectedData = PaginatedResult(
-                data = listOf(league("La Liga", "Spain", 1, 38)),
+                data = listOf(
+                    LeagueList(
+                        league = league("La Liga", "Spain", 1, 38),
+                        players = emptyList()
+                    )
+                ),
                 totalPages = 1
             )
-            coEvery { getLeagueListUseCase(1, any()) } returns Result.Success(expectedData)
+
+            coEvery {
+                getLeagueListUseCase(
+                    page = 1,
+                    limit = any(),
+                    sortingStrategy = viewModel.uiState.value.sortingStrategy
+                )
+            } returns Result.Success(expectedData)
 
             viewModel.uiState.test {
                 awaitItem().paginatedLeagues shouldBe PaginatedState.NotLoaded
@@ -60,16 +73,30 @@ internal class PlayerListViewModelTest {
         @Test
         fun `should load first page then load more and accumulate data`() = runTest {
             val firstPage = PaginatedResult(
-                data = listOf(league("La Liga")),
+                data = listOf(
+                    LeagueList(
+                        league = league("La Liga"),
+                        players = emptyList()
+                    )
+                ),
                 totalPages = 2
             )
             val secondPage = PaginatedResult(
-                data = (1..19).map { league("Player $it") },
+                data = (1..19).map {
+                    LeagueList(
+                        league = league("Player $it"),
+                        players = emptyList()
+                    )
+                },
                 totalPages = 2
             )
 
-            coEvery { getLeagueListUseCase(1, any()) } returns Result.Success(firstPage)
-            coEvery { getLeagueListUseCase(2, any()) } returns Result.Success(secondPage)
+            coEvery {
+                getLeagueListUseCase(1, any(), sortingStrategy = viewModel.uiState.value.sortingStrategy)
+            } returns Result.Success(firstPage)
+            coEvery {
+                getLeagueListUseCase(2, any(), sortingStrategy = viewModel.uiState.value.sortingStrategy)
+            } returns Result.Success(secondPage)
 
             viewModel.uiState.test {
                 awaitItem().paginatedLeagues shouldBe PaginatedState.NotLoaded
@@ -98,7 +125,8 @@ internal class PlayerListViewModelTest {
             coEvery {
                 getLeagueListUseCase(
                     any(),
-                    any()
+                    any(),
+                    sortingStrategy = viewModel.uiState.value.sortingStrategy
                 )
             } returns Result.Failure(DataError.Network.NO_INTERNET)
 
@@ -111,34 +139,38 @@ internal class PlayerListViewModelTest {
         }
 
         @Test
-        fun `when next page fails after first page, should emit LoadingMore then Error`() =
-            runTest {
-                val firstPage = PaginatedResult(
-                    data = listOf(league("La Liga", "Spain", 1, 38)),
-                    totalPages = 2
+        fun `when next page fails after first page, should emit LoadingMore then Error`() = runTest {
+            val firstPage = PaginatedResult(
+                data = listOf(
+                    LeagueList(
+                        league = league("La Liga", "Spain", 1, 38),
+                        players = emptyList()
+                    )
+                ),
+                totalPages = 2
+            )
+
+            coEvery {
+                getLeagueListUseCase(1, any(), sortingStrategy = viewModel.uiState.value.sortingStrategy)
+            } returns Result.Success(firstPage)
+            coEvery {
+                getLeagueListUseCase(2, any(), sortingStrategy = viewModel.uiState.value.sortingStrategy)
+            } returns Result.Failure(DataError.Network.NO_INTERNET)
+
+            viewModel.uiState.test {
+                awaitItem() // NotLoaded
+                viewModel.onAction(PlayerListAction.LoadNextPage)
+                awaitItem() // InitialLoading
+                awaitItem().paginatedLeagues shouldBe PaginatedState.Loaded(
+                    data = firstPage.data.toImmutableList(),
+                    isEndReached = false
                 )
-                coEvery { getLeagueListUseCase(1, any()) } returns Result.Success(firstPage)
-                coEvery {
-                    getLeagueListUseCase(
-                        2,
-                        any()
-                    )
-                } returns Result.Failure(DataError.Network.NO_INTERNET)
 
-                viewModel.uiState.test {
-                    awaitItem() // NotLoaded
-                    viewModel.onAction(PlayerListAction.LoadNextPage)
-                    awaitItem() // InitialLoading
-                    awaitItem().paginatedLeagues shouldBe PaginatedState.Loaded(
-                        data = firstPage.data.toImmutableList(),
-                        isEndReached = false
-                    )
-
-                    viewModel.onAction(PlayerListAction.LoadNextPage)
-                    awaitItem().paginatedLeagues shouldBe PaginatedState.LoadingMore(firstPage.data.toImmutableList())
-                    awaitItem().paginatedLeagues shouldBe PaginatedState.Error(DataError.Network.NO_INTERNET)
-                }
+                viewModel.onAction(PlayerListAction.LoadNextPage)
+                awaitItem().paginatedLeagues shouldBe PaginatedState.LoadingMore(firstPage.data.toImmutableList())
+                awaitItem().paginatedLeagues shouldBe PaginatedState.Error(DataError.Network.NO_INTERNET)
             }
+        }
     }
 
     @Nested
@@ -146,17 +178,20 @@ internal class PlayerListViewModelTest {
         @Test
         fun `when API returns empty list, should emit Loaded with empty data`() = runTest {
             val emptyPage = PaginatedResult(
-                data = emptyList<League>(),
+                data = emptyList<LeagueList>(),
                 totalPages = 1
             )
-            coEvery { getLeagueListUseCase(1, any()) } returns Result.Success(emptyPage)
+
+            coEvery {
+                getLeagueListUseCase(1, any(), sortingStrategy = viewModel.uiState.value.sortingStrategy)
+            } returns Result.Success(emptyPage)
 
             viewModel.uiState.test {
-                awaitItem() // NotLoaded
+                awaitItem()
                 viewModel.onAction(PlayerListAction.LoadNextPage)
                 awaitItem().paginatedLeagues shouldBe PaginatedState.InitialLoading
                 awaitItem().paginatedLeagues shouldBe PaginatedState.Loaded(
-                    data = emptyList<League>().toImmutableList(),
+                    data = emptyList<LeagueList>().toImmutableList(),
                     isEndReached = true
                 )
             }

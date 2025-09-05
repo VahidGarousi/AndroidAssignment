@@ -1,6 +1,5 @@
 package ir.miare.feature.player.data.repository
 
-
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -14,6 +13,10 @@ import ir.miare.feature.player.data.model.PlayerDto
 import ir.miare.feature.player.data.model.TeamDto
 import ir.miare.feature.player.data.remote.api.retrofit.PlayerApiService
 import ir.miare.feature.player.domain.model.League
+import ir.miare.feature.player.domain.model.LeagueList
+import ir.miare.feature.player.domain.model.LeagueListSortingStrategy
+import ir.miare.feature.player.domain.model.Player
+import ir.miare.feature.player.domain.model.Team
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
 import org.junit.jupiter.api.BeforeEach
@@ -34,134 +37,116 @@ internal class PlayerRepositoryImplTest {
     }
 
     @Test
-    fun `given API returns leagues, when getLeagues called, then return paginated result`() =
-        runTest {
-            // Arrange
-            val apiResponse = listOf(
-                LeagueListItemDto(
-                    league = LeagueDto("Spain", "La Liga", 1, 38),
-                    players = listOf(PlayerDto("Player1", TeamDto("Team1", 1), 10))
+    fun `given API returns leagues, when getLeagues called, then returns paginated leagues`() = runTest {
+        val apiResponse = listOf(
+            LeagueListItemDto(
+                league = LeagueDto("Spain", "La Liga", 1, 38),
+                players = listOf(PlayerDto("Player1", TeamDto("Team1", 1), 10))
+            ),
+            LeagueListItemDto(
+                league = LeagueDto("England", "Premier League", 2, 38),
+                players = listOf(PlayerDto("Player2", TeamDto("Team2", 2), 15))
+            )
+        )
+        coEvery { apiService.getLeagueList() } returns apiResponse
+
+        val result = repository.getLeagues(page = 1, limit = 1, sortingStrategy = LeagueListSortingStrategy.None)
+
+        result shouldBe Result.Success(
+            PaginatedResult(
+                data = listOf(
+                    LeagueList(
+                        league = League(name = "La Liga", country = "Spain", rank = 1, totalMatches = 38),
+                        players = listOf(Player(name = "Player1", team = Team("Team1", 1), totalGoal = 10))
+                    )
                 ),
-                LeagueListItemDto(
-                    league = LeagueDto("England", "Premier League", 2, 38),
-                    players = listOf(PlayerDto("Player2", TeamDto("Team2", 2), 15))
-                )
+                totalPages = 2
             )
-            coEvery { apiService.getLeagueList() } returns apiResponse
-
-            // Act
-            val result = repository.getLeagues(page = 1, limit = 1)
-
-            // Assert
-            result shouldBe Result.Success(
-                PaginatedResult(
-                    data = listOf(
-                        League(name = "La Liga", country = "Spain", rank = 1, totalMatches = 38)
-                    ),
-                    totalPages = 2
-                )
-            )
-            coVerify(exactly = 1) { apiService.getLeagueList() }
-        }
-
-    @Test
-    fun `given API returns empty list, when getLeagues called, then return empty paginated result`() =
-        runTest {
-            // Arrange
-            coEvery { apiService.getLeagueList() } returns emptyList()
-
-            // Act
-            val result = repository.getLeagues(page = 1, limit = 10)
-
-            // Assert
-            result shouldBe Result.Success(PaginatedResult(emptyList(), totalPages = 0))
-            coVerify(exactly = 1) { apiService.getLeagueList() }
-        }
-
-    @Test
-    fun `given API throws exception, when getLeagues called, then returns network failure`() = runTest {
-        // Arrange
-        val exception = RuntimeException("API failure")
-        coEvery { apiService.getLeagueList() } throws exception
-
-        // Act
-        val result = repository.getLeagues(page = 1, limit = 10)
-
-        // Assert
-        result shouldBe Result.Failure(DataError.Network.UNKNOWN)
+        )
         coVerify(exactly = 1) { apiService.getLeagueList() }
     }
 
     @Test
-    fun `given multiple leagues, when limit is 2, then return first two sorted by rank`() =
-        runTest {
-            // Arrange
-            val apiResponse = listOf(
-                LeagueListItemDto(LeagueDto("CountryA", "LeagueB", 2, 38), emptyList()),
-                LeagueListItemDto(LeagueDto("CountryB", "LeagueA", 1, 38), emptyList()),
-                LeagueListItemDto(LeagueDto("CountryC", "LeagueC", 3, 38), emptyList())
-            )
-            coEvery { apiService.getLeagueList() } returns apiResponse
+    fun `given API returns empty list, when getLeagues called, then returns empty paginated result`() = runTest {
+        coEvery { apiService.getLeagueList() } returns emptyList()
 
-            // Act
-            val result = repository.getLeagues(page = 1, limit = 2)
+        val result = repository.getLeagues(page = 1, limit = 10, sortingStrategy = LeagueListSortingStrategy.None)
 
-            // Assert
-            result shouldBe Result.Success(
-                PaginatedResult(
-                    data = listOf(
-                        League(name = "LeagueA", country = "CountryB", rank = 1, totalMatches = 38),
-                        League(name = "LeagueB", country = "CountryA", rank = 2, totalMatches = 38)
-                    ),
-                    totalPages = 2
-                )
-            )
-        }
+        result shouldBe Result.Success(PaginatedResult(emptyList(), totalPages = 0))
+        coVerify(exactly = 1) { apiService.getLeagueList() }
+    }
 
     @Test
-    fun `given page out of bounds, when getLeagues called, then return empty list`() = runTest {
-        // Arrange
+    fun `given API throws generic exception, when getLeagues called, then returns network failure`() = runTest {
+        coEvery { apiService.getLeagueList() } throws RuntimeException("API failure")
+
+        val result = repository.getLeagues(page = 1, limit = 10, sortingStrategy = LeagueListSortingStrategy.None)
+
+        result shouldBe Result.Failure(DataError.Network.UNKNOWN)
+    }
+
+    @Test
+    fun `given multiple leagues, when limit is 2 and sorted by rank, then returns first two leagues`() = runTest {
         val apiResponse = listOf(
-            LeagueListItemDto(LeagueDto("Country", "LeagueA", 1, 38), emptyList())
+            LeagueListItemDto(LeagueDto("CountryA", "LeagueB", 2, 38), emptyList()),
+            LeagueListItemDto(LeagueDto("CountryB", "LeagueA", 1, 38), emptyList()),
+            LeagueListItemDto(LeagueDto("CountryC", "LeagueC", 3, 38), emptyList())
         )
         coEvery { apiService.getLeagueList() } returns apiResponse
 
-        // Act
-        val result = repository.getLeagues(page = 2, limit = 1)
+        val result = repository.getLeagues(
+            page = 1,
+            limit = 2,
+            sortingStrategy = LeagueListSortingStrategy.ByLeagueRanking(LeagueListSortingStrategy.Direction.ASCENDING)
+        )
 
-        // Assert
         result shouldBe Result.Success(
             PaginatedResult(
-                data = emptyList(),
-                totalPages = 1
+                data = listOf(
+                    LeagueList(League(name = "LeagueA", country = "CountryB", rank = 1, totalMatches = 38), emptyList()),
+                    LeagueList(League(name = "LeagueB", country = "CountryA", rank = 2, totalMatches = 38), emptyList())
+                ),
+                totalPages = 2
             )
         )
+        coVerify(exactly = 1) { apiService.getLeagueList() }
     }
 
+    @Test
+    fun `given requested page exceeds total pages, when getLeagues called, then returns empty list`() = runTest {
+        coEvery { apiService.getLeagueList() } returns listOf(
+            LeagueListItemDto(LeagueDto("Country", "LeagueA", 1, 38), emptyList())
+        )
+
+        val result = repository.getLeagues(page = 2, limit = 1, sortingStrategy = LeagueListSortingStrategy.None)
+
+        result shouldBe Result.Success(PaginatedResult(data = emptyList(), totalPages = 1))
+    }
 
     @Test
     fun `given API throws IOException, when getLeagues called, then returns NO_INTERNET`() = runTest {
         coEvery { apiService.getLeagueList() } throws IOException()
-        val result = repository.getLeagues(page = 1, limit = 10)
+
+        val result = repository.getLeagues(page = 1, limit = 10, sortingStrategy = LeagueListSortingStrategy.None)
+
         result shouldBe Result.Failure(DataError.Network.NO_INTERNET)
     }
 
     @Test
     fun `given API throws HttpException 404, when getLeagues called, then returns NOT_FOUND`() = runTest {
-        coEvery { apiService.getLeagueList() } throws HttpException(
-            Response.error<Any>(
-                404,
-                mockk(relaxed = true)
-            )
-        )
-        val result = repository.getLeagues(page = 1, limit = 10)
+        coEvery { apiService.getLeagueList() } throws HttpException(Response.error<Any>(404, mockk(relaxed = true)))
+
+        val result = repository.getLeagues(page = 1, limit = 10, sortingStrategy = LeagueListSortingStrategy.None)
+
         result shouldBe Result.Failure(DataError.Network.NOT_FOUND)
     }
 
     @Test
-    fun `given API throws SerializationException, when getLeagues called, then returns SERIALIZATION`() = runTest {
+    fun `given API throws SerializationException, when getLeagues called, then returns SERIALIZATION error`() = runTest {
         coEvery { apiService.getLeagueList() } throws SerializationException("bad json")
-        val result = repository.getLeagues(page = 1, limit = 10)
+
+        val result = repository.getLeagues(page = 1, limit = 10, sortingStrategy = LeagueListSortingStrategy.None)
+
         result shouldBe Result.Failure(DataError.Network.SERIALIZATION)
     }
 }

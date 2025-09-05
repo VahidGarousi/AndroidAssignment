@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.miare.core.ui.paginator.manager.PageBasedPaginationManager
 import ir.miare.core.ui.paginator.manager.PaginationManager
+import ir.miare.feature.player.domain.model.LeagueListSortingStrategy
 import ir.miare.feature.player.domain.usecase.GetLeagueListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +20,8 @@ class PlayerListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PlayerListState())
     val uiState = _uiState.asStateFlow()
 
+    private val currentSortingStrategy: LeagueListSortingStrategy
+        get() = _uiState.value.sortingStrategy
 
     private val playersPaginationManager = PaginationManager(
         strategy = PageBasedPaginationManager(
@@ -26,7 +29,8 @@ class PlayerListViewModel @Inject constructor(
             fetch = { page ->
                 getLeagueListUseCase(
                     page = page,
-                    limit = 10
+                    limit = 10,
+                    sortingStrategy = currentSortingStrategy
                 )
             }
         )
