@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.miare.core.ui.paginator.manager.PageBasedPaginationManager
 import ir.miare.core.ui.paginator.manager.PaginationManager
-import ir.miare.feature.player.domain.GetLeagueListUseCase
+import ir.miare.feature.player.domain.usecase.GetLeagueListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

@@ -1,4 +1,4 @@
-package ir.miare.feature.player.domain
+package ir.miare.feature.player.domain.usecase
 
 import ir.miare.core.common.util.DataError
 import ir.miare.core.common.util.Result
