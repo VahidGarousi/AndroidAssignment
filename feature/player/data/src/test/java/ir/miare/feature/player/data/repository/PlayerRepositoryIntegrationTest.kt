@@ -70,7 +70,7 @@ internal class PlayerRepositoryIntegrationTest {
         val result = repository.getLeagues(
             page = 1,
             limit = 10,
-            sortingStrategy = ir.miare.feature.player.domain.model.LeagueListSortingStrategy.None
+            sortingStrategy = LeagueListSortingStrategy.None
         )
 
         (result as Result.Success).data.data.size shouldBe 0
@@ -83,7 +83,7 @@ internal class PlayerRepositoryIntegrationTest {
         val result = repository.getLeagues(
             page = 1,
             limit = 10,
-            sortingStrategy = ir.miare.feature.player.domain.model.LeagueListSortingStrategy.None
+            sortingStrategy = LeagueListSortingStrategy.None
         )
 
         (result as Result.Failure).error shouldBe DataError.Network.NOT_FOUND
@@ -96,39 +96,37 @@ internal class PlayerRepositoryIntegrationTest {
         val result = repository.getLeagues(
             page = 1,
             limit = 10,
-            sortingStrategy = ir.miare.feature.player.domain.model.LeagueListSortingStrategy.None
+            sortingStrategy = LeagueListSortingStrategy.None
         )
 
         (result as Result.Failure).error shouldBe DataError.Network.SERVER_ERROR
     }
 
     @Test
-    fun `given malformed JSON, when getLeagues called, then returns SERIALIZATION failure`() =
-        runTest {
-            mockWebServer.enqueue(MockResponse.Builder().code(200).body("{ invalid json }").build())
+    fun `given malformed JSON, when getLeagues called, then returns SERIALIZATION failure`() = runTest {
+        mockWebServer.enqueue(MockResponse.Builder().code(200).body("{ invalid json }").build())
 
-            val result = repository.getLeagues(
-                page = 1,
-                limit = 5,
-                sortingStrategy = ir.miare.feature.player.domain.model.LeagueListSortingStrategy.None
-            )
+        val result = repository.getLeagues(
+            page = 1,
+            limit = 5,
+            sortingStrategy = LeagueListSortingStrategy.None
+        )
 
-            (result as Result.Failure).error shouldBe DataError.Network.SERIALIZATION
-        }
+        (result as Result.Failure).error shouldBe DataError.Network.SERIALIZATION
+    }
 
     @Test
-    fun `given page exceeds total pages, when getLeagues called, then returns empty list`() =
-        runTest {
-            mockWebServer.enqueueResponse("leagues-200.json", 200)
+    fun `given page exceeds total pages, when getLeagues called, then returns empty list`() = runTest {
+        mockWebServer.enqueueResponse("leagues-200.json", 200)
 
-            val result = repository.getLeagues(
-                page = 100,
-                limit = 5,
-                sortingStrategy = ir.miare.feature.player.domain.model.LeagueListSortingStrategy.None
-            )
+        val result = repository.getLeagues(
+            page = 100,
+            limit = 5,
+            sortingStrategy = LeagueListSortingStrategy.None
+        )
 
-            (result as Result.Success).data.data.size shouldBe 0
-        }
+        (result as Result.Success).data.data.size shouldBe 0
+    }
 
     @Test
     fun `given leagues JSON, when sorted ascending by rank, then returns sorted leagues with players`() = runTest {
@@ -143,29 +141,28 @@ internal class PlayerRepositoryIntegrationTest {
         )
 
         val leagues = (result as Result.Success).data.data
-        // Verify league order
         leagues.map { it.league.name } shouldBe listOf(
             "Premier League", "La Liga", "Bundesliga"
         )
 
-        // Verify first league's players
-        val premierLeaguePlayers = leagues[0].players
-        premierLeaguePlayers.size shouldBe 5
-        premierLeaguePlayers[0].name shouldBe "Victor Osimhen"
-        premierLeaguePlayers[0].totalGoal shouldBe 22
-        premierLeaguePlayers[0].team.name shouldBe "Napoli"
-        premierLeaguePlayers[0].team.rank shouldBe 1
+        // First league's teams + players
+        val premierLeagueTeams = leagues[0].teams
+        premierLeagueTeams.size shouldBe 5
+        premierLeagueTeams[0].name shouldBe "Napoli"
+        premierLeagueTeams[0].rank shouldBe 1
+        premierLeagueTeams[0].players[0].name shouldBe "Victor Osimhen"
+        premierLeagueTeams[0].players[0].totalGoal shouldBe 22
 
-        // Verify second league's players
-        val laLigaPlayers = leagues[1].players
-        laLigaPlayers.size shouldBe 5
-        laLigaPlayers[0].name shouldBe "Arnaud Kalimuendo"
-        laLigaPlayers[0].totalGoal shouldBe 17
-        laLigaPlayers[0].team.name shouldBe "Rennes"
-        laLigaPlayers[0].team.rank shouldBe 3
+        // Second league's teams + players
+        val laLigaTeams = leagues[1].teams
+        laLigaTeams.size shouldBe 5
+        laLigaTeams[0].name shouldBe "Rennes"
+        laLigaTeams[0].rank shouldBe 3
+        laLigaTeams[0].players[0].name shouldBe "Arnaud Kalimuendo"
+        laLigaTeams[0].players[0].totalGoal shouldBe 17
 
-        // Verify third league has no players
-        leagues[2].players shouldBe emptyList()
+        // Third league has no teams
+        leagues[2].teams shouldBe emptyList()
     }
 
     @Test
@@ -181,29 +178,21 @@ internal class PlayerRepositoryIntegrationTest {
         )
 
         val leagues = (result as Result.Success).data.data
-        // Verify league order
         leagues.map { it.league.name } shouldBe listOf(
             "Bundesliga", "La Liga", "Premier League"
         )
 
-        // Verify second league's players (La Liga)
-        val laLigaPlayers = leagues[1].players
-        laLigaPlayers.size shouldBe 5
-        laLigaPlayers[0].name shouldBe "Arnaud Kalimuendo"
-        laLigaPlayers[0].totalGoal shouldBe 17
-        laLigaPlayers[0].team.name shouldBe "Rennes"
-        laLigaPlayers[0].team.rank shouldBe 3
+        val laLigaTeams = leagues[1].teams
+        laLigaTeams.size shouldBe 5
+        laLigaTeams[0].name shouldBe "Rennes"
+        laLigaTeams[0].players[0].name shouldBe "Arnaud Kalimuendo"
 
-        // Verify third league's players (Premier League)
-        val premierLeaguePlayers = leagues[2].players
-        premierLeaguePlayers.size shouldBe 5
-        premierLeaguePlayers[0].name shouldBe "Victor Osimhen"
-        premierLeaguePlayers[0].totalGoal shouldBe 22
-        premierLeaguePlayers[0].team.name shouldBe "Napoli"
-        premierLeaguePlayers[0].team.rank shouldBe 1
+        val premierLeagueTeams = leagues[2].teams
+        premierLeagueTeams.size shouldBe 5
+        premierLeagueTeams[0].name shouldBe "Napoli"
+        premierLeagueTeams[0].players[0].name shouldBe "Victor Osimhen"
 
-        // Verify first league has no players
-        leagues[0].players shouldBe emptyList()
+        leagues[0].teams shouldBe emptyList()
     }
 
     @Test
@@ -221,13 +210,10 @@ internal class PlayerRepositoryIntegrationTest {
             "La Liga", "Premier League", "Bundesliga"
         )
 
-        // Check first league's first player
-        val laLigaPlayers = leagues[0].players
-        laLigaPlayers.size shouldBe 5
-        laLigaPlayers[0].name shouldBe "Arnaud Kalimuendo"
-        laLigaPlayers[0].totalGoal shouldBe 17
-        laLigaPlayers[0].team.name shouldBe "Rennes"
-        laLigaPlayers[0].team.rank shouldBe 3
+        val laLigaTeams = leagues[0].teams
+        laLigaTeams.size shouldBe 5
+        laLigaTeams[0].name shouldBe "Rennes"
+        laLigaTeams[0].players[0].name shouldBe "Arnaud Kalimuendo"
+        laLigaTeams[0].players[0].totalGoal shouldBe 17
     }
-
 }

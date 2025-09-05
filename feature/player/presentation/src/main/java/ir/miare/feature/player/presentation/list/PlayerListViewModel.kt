@@ -29,13 +29,17 @@ class PlayerListViewModel @Inject constructor(
                 fetch = { page ->
                     getLeagueListUseCase(
                         page = page,
-                        limit = 5,
+                        limit = 10,
                         sortingStrategy = _uiState.value.sortingStrategy
                     )
                 }
             )
         ) { newState ->
-            _uiState.update { it.copy(paginatedLeagues = newState) }
+             _uiState.update {
+                 it.copy(
+                     paginatedLeagues = newState
+                 )
+             }
         }
     }
 

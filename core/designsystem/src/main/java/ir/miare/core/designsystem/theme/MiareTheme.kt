@@ -6,6 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
+import ir.miare.core.designsystem.theme.colors.LocalMiareColors
+import ir.miare.core.designsystem.theme.colors.MiareColors
+import ir.miare.core.designsystem.theme.colors.miareDarkColors
+import ir.miare.core.designsystem.theme.colors.miareLightColors
+import ir.miare.core.designsystem.theme.colors.updateColorsFrom
 
 val MiareDarkColors = miareDarkColors()
 val MiareLightColors = miareLightColors()

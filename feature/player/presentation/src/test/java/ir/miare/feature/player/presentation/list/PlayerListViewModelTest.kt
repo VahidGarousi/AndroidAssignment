@@ -16,7 +16,6 @@ import ir.miare.feature.player.domain.model.Team
 import ir.miare.feature.player.domain.usecase.GetLeagueListUseCase
 import ir.miare.feature.player.presentation.MainCoroutineExtension
 import ir.miare.feature.player.presentation.list.LeagueFakeGenerator.league
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -45,7 +44,6 @@ internal class PlayerListViewModelTest {
         }
     }
 
-
     @Nested
     inner class LoadNextPageSuccessTests {
 
@@ -56,9 +54,17 @@ internal class PlayerListViewModelTest {
                     data = listOf(
                         LeagueList(
                             league = league("La Liga", "Spain", 1, 38),
-                            players = listOf(
-                                Player("Jude Bellingham", Team("Real Madrid", 1), 19),
-                                Player("Robert Lewandowski", Team("Barcelona", 2), 15)
+                            teams = listOf(
+                                Team(
+                                    name = "Real Madrid",
+                                    rank = 1,
+                                    players = listOf(Player("Jude Bellingham", totalGoal = 19))
+                                ),
+                                Team(
+                                    name = "Barcelona",
+                                    rank = 2,
+                                    players = listOf(Player("Robert Lewandowski", totalGoal = 15))
+                                )
                             )
                         )
                     ),
@@ -83,11 +89,13 @@ internal class PlayerListViewModelTest {
                     loadedState.data[0].league.name shouldBe "La Liga"
                     loadedState.data[0].league.country shouldBe "Spain"
 
-                    // Assert players
-                    val players = loadedState.data[0].players
-                    players.map { it.name } shouldBe listOf("Jude Bellingham", "Robert Lewandowski")
-                    players.map { it.team.name } shouldBe listOf("Real Madrid", "Barcelona")
-                    players.map { it.totalGoal } shouldBe listOf(19, 15)
+                    // Assert teams and players
+                    val teams = loadedState.data[0].teams
+                    teams.map { it.name } shouldBe listOf("Real Madrid", "Barcelona")
+                    teams[0].players[0].name shouldBe "Jude Bellingham"
+                    teams[0].players[0].totalGoal shouldBe 19
+                    teams[1].players[0].name shouldBe "Robert Lewandowski"
+                    teams[1].players[0].totalGoal shouldBe 15
                 }
 
                 coVerify { getLeagueListUseCase(1, 10, viewModel.uiState.value.sortingStrategy) }
@@ -99,7 +107,9 @@ internal class PlayerListViewModelTest {
                 data = listOf(
                     LeagueList(
                         league = league("La Liga"),
-                        players = listOf(Player("Player1", Team("Team1", 1), 5))
+                        teams = listOf(
+                            Team("Team1", 1, listOf(Player("Player1", totalGoal = 10)))
+                        )
                     )
                 ),
                 totalPages = 2
@@ -108,25 +118,19 @@ internal class PlayerListViewModelTest {
                 data = listOf(
                     LeagueList(
                         league = league("Premier League"),
-                        players = listOf(Player("Player2", Team("Team2", 2), 7))
+                        teams = listOf(
+                            Team("Team2", 2, listOf(Player("Player2", totalGoal = 7)))
+                        )
                     )
                 ),
                 totalPages = 2
             )
 
             coEvery {
-                getLeagueListUseCase(
-                    1,
-                    10,
-                    viewModel.uiState.value.sortingStrategy
-                )
+                getLeagueListUseCase(1, 10, viewModel.uiState.value.sortingStrategy)
             } returns Result.Success(firstPage)
             coEvery {
-                getLeagueListUseCase(
-                    2,
-                    10,
-                    viewModel.uiState.value.sortingStrategy
-                )
+                getLeagueListUseCase(2, 10, viewModel.uiState.value.sortingStrategy)
             } returns Result.Success(secondPage)
 
             viewModel.uiState.test {
@@ -136,13 +140,13 @@ internal class PlayerListViewModelTest {
                 awaitItem() // InitialLoading
                 val loadedFirst = awaitItem().paginatedLeagues as PaginatedState.Loaded
                 loadedFirst.data.size shouldBe 1
-                loadedFirst.data[0].players[0].name shouldBe "Player1"
+                loadedFirst.data[0].teams[0].players[0].name shouldBe "Player1"
 
                 viewModel.onAction(PlayerListAction.LoadNextPage)
                 awaitItem() // LoadingMore
                 val loadedCombined = awaitItem().paginatedLeagues as PaginatedState.Loaded
                 loadedCombined.data.size shouldBe 2
-                loadedCombined.data[1].players[0].name shouldBe "Player2"
+                loadedCombined.data[1].teams[0].players[0].name shouldBe "Player2"
             }
         }
     }
@@ -156,25 +160,17 @@ internal class PlayerListViewModelTest {
                     data = listOf(
                         LeagueList(
                             league = league("La Liga", "Spain", 1, 38),
-                            players = listOf(Player("Player1", Team("Team1", 1), 5))
+                            teams = listOf(Team("Team1", 1, listOf(Player("Player1", totalGoal = 10))))
                         )
                     ),
                     totalPages = 2
                 )
 
                 coEvery {
-                    getLeagueListUseCase(
-                        1,
-                        10,
-                        viewModel.uiState.value.sortingStrategy
-                    )
+                    getLeagueListUseCase(1, 10, viewModel.uiState.value.sortingStrategy)
                 } returns Result.Success(firstPage)
                 coEvery {
-                    getLeagueListUseCase(
-                        2,
-                        10,
-                        viewModel.uiState.value.sortingStrategy
-                    )
+                    getLeagueListUseCase(2, 10, viewModel.uiState.value.sortingStrategy)
                 } returns Result.Failure(DataError.Network.NO_INTERNET)
 
                 viewModel.uiState.test {
@@ -199,11 +195,11 @@ internal class PlayerListViewModelTest {
                     data = listOf(
                         LeagueList(
                             league("Z League", "CountryZ", 2, 38),
-                            players = listOf(Player("PlayerZ", Team("TeamZ", 2), 8))
+                            teams = listOf(Team("TeamZ", 2, listOf(Player("PlayerZ", totalGoal = 8))))
                         ),
                         LeagueList(
                             league("A League", "CountryA", 1, 38),
-                            players = listOf(Player("PlayerA", Team("TeamA", 1), 12))
+                            teams = listOf(Team("TeamA", 1, listOf(Player("PlayerA", totalGoal = 12))))
                         )
                     ),
                     totalPages = 1
@@ -213,11 +209,11 @@ internal class PlayerListViewModelTest {
                     data = listOf(
                         LeagueList(
                             league("A League", "CountryA", 1, 38),
-                            players = listOf(Player("PlayerA", Team("TeamA", 1), 12))
+                            teams = listOf(Team("TeamA", 1, listOf(Player("PlayerA", totalGoal = 12))))
                         ),
                         LeagueList(
                             league("Z League", "CountryZ", 2, 38),
-                            players = listOf(Player("PlayerZ", Team("TeamZ", 2), 8))
+                            teams = listOf(Team("TeamZ", 2, listOf(Player("PlayerZ", totalGoal = 8))))
                         )
                     ),
                     totalPages = 1
@@ -246,9 +242,8 @@ internal class PlayerListViewModelTest {
                     firstLoaded.paginatedLeagues.data?.map { it.league.name } shouldBe listOf("Z League", "A League")
 
                     // Assert unsorted players
-                    val firstPlayers = firstLoaded.paginatedLeagues.data?.map { it.players }?.flatten()
+                    val firstPlayers = firstLoaded.paginatedLeagues.data?.map { it.teams }?.flatten()?.map { it.players }?.flatten()
                     firstPlayers?.map { it.name } shouldBe listOf("PlayerZ", "PlayerA")
-                    firstPlayers?.map { it.team.name } shouldBe listOf("TeamZ", "TeamA")
                     firstPlayers?.map { it.totalGoal } shouldBe listOf(8, 12)
 
                     // Change sorting strategy
@@ -258,12 +253,9 @@ internal class PlayerListViewModelTest {
                     awaitItem().paginatedLeagues shouldBe PaginatedState.NotLoaded
                     awaitItem().paginatedLeagues shouldBe PaginatedState.InitialLoading
                     val sortedLoaded = awaitItem()
+                    val sortedPlayers = sortedLoaded.paginatedLeagues.data?.map { it.teams }?.flatten()?.map { it.players }?.flatten()
                     sortedLoaded.paginatedLeagues.data?.map { it.league.name } shouldBe listOf("A League", "Z League")
-
-                    // Assert sorted players
-                    val sortedPlayers = sortedLoaded.paginatedLeagues.data?.map { it.players }?.flatten()
                     sortedPlayers?.map { it.name } shouldBe listOf("PlayerA", "PlayerZ")
-                    sortedPlayers?.map { it.team.name } shouldBe listOf("TeamA", "TeamZ")
                     sortedPlayers?.map { it.totalGoal } shouldBe listOf(12, 8)
                 }
 
@@ -271,6 +263,4 @@ internal class PlayerListViewModelTest {
                 viewModel.uiState.value.sortingStrategy shouldBe newStrategy
             }
     }
-
-
 }

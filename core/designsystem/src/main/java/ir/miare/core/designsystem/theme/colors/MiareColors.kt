@@ -1,4 +1,4 @@
-package ir.miare.core.designsystem.theme
+package ir.miare.core.designsystem.theme.colors
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,21 +7,22 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 class MiareColors(
-    pageBackgroundColor: Color,
-    textColor : Color
+    textColor : Color,
+    bg: Bg
 ) {
-    var pageBackgroundColor by mutableStateOf(pageBackgroundColor)
-        internal set
-    
    var textColor by mutableStateOf(textColor)
         internal set
 
+    var bg by mutableStateOf(bg)
+        internal set
+
+
     fun copy(
-        pageBackgroundColor: Color = this.pageBackgroundColor,
         textColor: Color = this.textColor,
+        bg: Bg = this.bg,
     ): MiareColors = MiareColors(
-        pageBackgroundColor = pageBackgroundColor,
-        textColor = textColor
+        textColor = textColor,
+        bg = bg
     )
 }
 
@@ -40,8 +41,8 @@ class MiareColors(
  * the specific changed value to recompose.
  */
 fun MiareColors.updateColorsFrom(other: MiareColors) {
-    pageBackgroundColor = other.pageBackgroundColor
     textColor = other.textColor
+    bg = other.bg
 }
 
 val LocalMiareColors = staticCompositionLocalOf { miareDarkColors() }

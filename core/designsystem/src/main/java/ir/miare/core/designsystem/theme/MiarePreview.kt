@@ -1,5 +1,6 @@
 package ir.miare.core.designsystem.theme
 
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -13,8 +14,12 @@ fun MiarePreview(
     CompositionLocalProvider(
         LocalLayoutDirection provides direction
     ) {
-        MiareTheme(
-            content = content
-        )
+        Surface(
+            color = MiareTheme.colors.bg.body
+        ) {
+            MiareTheme(
+                content = content
+            )
+        }
     }
 }

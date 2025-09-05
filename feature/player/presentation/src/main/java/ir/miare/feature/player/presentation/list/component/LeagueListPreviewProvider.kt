@@ -9,18 +9,43 @@ import ir.miare.feature.player.domain.model.Team
 class LeagueListPreviewProvider : PreviewParameterProvider<LeagueList> {
     override val values = sequenceOf(
         LeagueList(
-            league = League("Spain", "La Liga", 1, 38),
-            players = listOf(
-                Player("Jude Bellingham", Team("Real Madrid", 1), 19),
-                Player("Vinicius Junior", Team("Real Madrid", 1), 15)
+            league = League(
+                country = "Spain",
+                name = "La Liga",
+                rank = 1,
+                totalMatches = 38
+            ),
+            teams = listOf(
+                Team(
+                    name = "Real Madrid",
+                    rank = 1,
+                    players = listOf(
+                        Player(name = "Jude Bellingham", totalGoal = 19),
+                        Player(name = "Vinicius Junior", totalGoal = 15)
+                    )
+                )
             )
         ),
-        LeagueList(
-            league = League("England", "Premier League", 2, 38),
-            players = listOf(
-                Player("Harry Kane", Team("Tottenham", 3), 18),
-                Player("Mohamed Salah", Team("Liverpool", 2), 17)
-            )
-        )
+        // Uncomment and adjust additional leagues if needed
+//        LeagueList(
+//            league = League(
+//                country = "England",
+//                name = "Premier League",
+//                rank = 2,
+//                totalMatches = 38
+//            ),
+//            teams = listOf(
+//                Team(
+//                    name = "Tottenham",
+//                    rank = 3,
+//                    players = listOf(Player(name = "Harry Kane", totalGoal = 18))
+//                ),
+//                Team(
+//                    name = "Liverpool",
+//                    rank = 2,
+//                    players = listOf(Player(name = "Mohamed Salah", totalGoal = 17))
+//                )
+//            )
+//        )
     )
 }

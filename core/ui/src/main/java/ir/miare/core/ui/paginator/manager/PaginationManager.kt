@@ -4,6 +4,7 @@ import ir.miare.core.common.util.DataError
 import ir.miare.core.common.util.fold
 import ir.miare.core.ui.paginator.state.PaginatedState
 import ir.miare.core.ui.paginator.strategy.PaginationStrategy
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
 class PaginationManager<T>(
@@ -11,7 +12,7 @@ class PaginationManager<T>(
     private val onStateUpdated: (PaginatedState<T>) -> Unit,
 ) {
     private var isLoading = false
-    private val allItems = mutableListOf<T>()
+    private val allItems: MutableList<T> = mutableListOf<T>()
 
     suspend fun loadNextPage() {
         if (isLoading || !strategy.hasMore()) return
