@@ -9,8 +9,8 @@ object LeagueFakeGenerator {
         rank: Int = 1,
         matches: Int = 38
     ) = League(
-        country = name,
-        name = country,
+        country = country,
+        name = name,
         rank = rank,
         totalMatches = matches
     )
