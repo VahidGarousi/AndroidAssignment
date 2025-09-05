@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ir.miare.core.common.util.AppError
 import ir.miare.core.ui.paginator.state.PaginatedState
 import ir.miare.feature.player.domain.model.LeagueList
+import ir.miare.feature.player.presentation.list.component.LeagueCard
 
 @Composable
 fun PlayerListScreen(
@@ -132,32 +133,6 @@ private fun PlayerListScreen(
                 ) {
                     CircularProgressIndicator()
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun LeagueCard(
-    modifier: Modifier = Modifier,
-    list: LeagueList
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max)
-        ) {
-            Text(text = list.league.name)
-            Text(text = list.league.country)
-            Text(text = "" + list.league.rank)
-            Text(text = "" + list.league.totalMatches)
-            list.players.forEach { player ->
-                Text(text = player.name)
             }
         }
     }
