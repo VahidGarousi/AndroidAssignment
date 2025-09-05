@@ -29,7 +29,7 @@ class PlayerListViewModel @Inject constructor(
                 fetch = { page ->
                     getLeagueListUseCase(
                         page = page,
-                        limit = 10,
+                        limit = 5,
                         sortingStrategy = _uiState.value.sortingStrategy
                     )
                 }
@@ -46,7 +46,9 @@ class PlayerListViewModel @Inject constructor(
         }
     }
 
-    private fun changeSortingStrategy(strategy: LeagueListSortingStrategy) {
+    private fun changeSortingStrategy(
+        strategy: LeagueListSortingStrategy
+    ) {
         _uiState.update {
             it.copy(
                 sortingStrategy = strategy,

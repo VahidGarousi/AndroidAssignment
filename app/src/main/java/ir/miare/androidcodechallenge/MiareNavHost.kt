@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import ir.miare.feature.player.presentation.navigation.PlayerBaseRoute
-import ir.miare.feature.player.presentation.navigation.player
+import ir.miare.feature.player.presentation.navigation.footballPlayerNavigation
 
 
 @Composable
@@ -19,6 +19,6 @@ fun MiareNavHost(
         navController = navController,
         startDestination = PlayerBaseRoute
     ) {
-        player()
+        footballPlayerNavigation()
     }
 }
