@@ -1,0 +1,111 @@
+[
+  {
+    "league": {
+      "name": "La Liga",
+      "country": "Spain",
+      "rank": 2,
+      "total_matches": 38
+    },
+    "players": [
+      {
+        "name": "Arnaud Kalimuendo",
+        "total_goal": 17,
+        "team": {
+          "name": "Rennes",
+          "rank": 3
+        }
+      },
+      {
+        "name": "Ousmane Dembélé",
+        "total_goal": 21,
+        "team": {
+          "name": "Paris Saint-Germain",
+          "rank": 1
+        }
+      },
+      {
+        "name": "Alexandre Lacazette",
+        "total_goal": 15,
+        "team": {
+          "name": "Olympique Lyonnais",
+          "rank": 5
+        }
+      },
+      {
+        "name": "Mason Greenwood",
+        "total_goal": 21,
+        "team": {
+          "name": "Olympique Marseille",
+          "rank": 2
+        }
+      },
+      {
+        "name": "Jonathan David",
+        "total_goal": 16,
+        "team": {
+          "name": "Lille",
+          "rank": 4
+        }
+      }
+    ]
+  },
+  {
+    "league": {
+      "name": "Premier League",
+      "country": "England",
+      "rank": 1,
+      "total_matches": 38
+    },
+    "players": [
+      {
+        "name": "Victor Osimhen",
+        "total_goal": 22,
+        "team": {
+          "name": "Napoli",
+          "rank": 1
+        }
+      },
+      {
+        "name": "Rafael Leão",
+        "total_goal": 16,
+        "team": {
+          "name": "AC Milan",
+          "rank": 4
+        }
+      },
+      {
+        "name": "Dusan Vlahović",
+        "total_goal": 18,
+        "team": {
+          "name": "Juventus",
+          "rank": 3
+        }
+      },
+      {
+        "name": "Lautaro Martínez",
+        "total_goal": 20,
+        "team": {
+          "name": "Inter Milan",
+          "rank": 2
+        }
+      },
+      {
+        "name": "Sergej Milinković-Savić",
+        "total_goal": 14,
+        "team": {
+          "name": "Lazio",
+          "rank": 5
+        }
+      }
+    ]
+  },
+  {
+    "league": {
+      "name": "Bundesliga",
+      "country": "Germany",
+      "rank": 4,
+      "total_matches": 34
+    },
+    "players": []
+  }
+]

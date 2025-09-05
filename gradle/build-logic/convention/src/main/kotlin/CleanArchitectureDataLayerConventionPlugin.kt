@@ -13,6 +13,16 @@ class CleanArchitectureDataLayerConventionPlugin : Plugin<Project> {
             "implementation"(libs.findLibrary("hilt.android").get())
             "implementation"(project(":core:network"))
             "implementation"(project(":core:domain"))
+            "testImplementation"(libs.findLibrary("junit5.api").get())
+            "testImplementation"(libs.findLibrary("junit5.params").get())
+            "testRuntimeOnly"(libs.findLibrary("junit5.engine").get())
+            "testImplementation"(libs.findLibrary("kotest.assertions.core").get())
+            "testImplementation"(libs.findLibrary("kotest.framework.api").get())
+            "testImplementation"(libs.findLibrary("kotest.runner.junit5").get())
+            "testImplementation"(libs.findLibrary("mockk").get())
+            "testImplementation"(libs.findLibrary("mockk.agent").get())
+            "testImplementation"(libs.findLibrary("turbine").get())
+            "testImplementation"(libs.findLibrary("okhttp.mockwebserver").get())
         }
     }
 }
