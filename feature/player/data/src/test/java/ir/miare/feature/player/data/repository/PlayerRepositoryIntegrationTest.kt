@@ -129,4 +129,105 @@ internal class PlayerRepositoryIntegrationTest {
 
             (result as Result.Success).data.data.size shouldBe 0
         }
+
+    @Test
+    fun `given leagues JSON, when sorted ascending by rank, then returns sorted leagues with players`() = runTest {
+        mockWebServer.enqueueResponse("leagues-200.json", 200)
+
+        val result = repository.getLeagues(
+            page = 1,
+            limit = 10,
+            sortingStrategy = LeagueListSortingStrategy.ByLeagueRanking(
+                LeagueListSortingStrategy.Direction.ASCENDING
+            )
+        )
+
+        val leagues = (result as Result.Success).data.data
+        // Verify league order
+        leagues.map { it.league.name } shouldBe listOf(
+            "Premier League", "La Liga", "Bundesliga"
+        )
+
+        // Verify first league's players
+        val premierLeaguePlayers = leagues[0].players
+        premierLeaguePlayers.size shouldBe 5
+        premierLeaguePlayers[0].name shouldBe "Victor Osimhen"
+        premierLeaguePlayers[0].totalGoal shouldBe 22
+        premierLeaguePlayers[0].team.name shouldBe "Napoli"
+        premierLeaguePlayers[0].team.rank shouldBe 1
+
+        // Verify second league's players
+        val laLigaPlayers = leagues[1].players
+        laLigaPlayers.size shouldBe 5
+        laLigaPlayers[0].name shouldBe "Arnaud Kalimuendo"
+        laLigaPlayers[0].totalGoal shouldBe 17
+        laLigaPlayers[0].team.name shouldBe "Rennes"
+        laLigaPlayers[0].team.rank shouldBe 3
+
+        // Verify third league has no players
+        leagues[2].players shouldBe emptyList()
+    }
+
+    @Test
+    fun `given leagues JSON, when sorted descending by rank, then returns sorted leagues with players`() = runTest {
+        mockWebServer.enqueueResponse("leagues-200.json", 200)
+
+        val result = repository.getLeagues(
+            page = 1,
+            limit = 10,
+            sortingStrategy = LeagueListSortingStrategy.ByLeagueRanking(
+                LeagueListSortingStrategy.Direction.DESCENDING
+            )
+        )
+
+        val leagues = (result as Result.Success).data.data
+        // Verify league order
+        leagues.map { it.league.name } shouldBe listOf(
+            "Bundesliga", "La Liga", "Premier League"
+        )
+
+        // Verify second league's players (La Liga)
+        val laLigaPlayers = leagues[1].players
+        laLigaPlayers.size shouldBe 5
+        laLigaPlayers[0].name shouldBe "Arnaud Kalimuendo"
+        laLigaPlayers[0].totalGoal shouldBe 17
+        laLigaPlayers[0].team.name shouldBe "Rennes"
+        laLigaPlayers[0].team.rank shouldBe 3
+
+        // Verify third league's players (Premier League)
+        val premierLeaguePlayers = leagues[2].players
+        premierLeaguePlayers.size shouldBe 5
+        premierLeaguePlayers[0].name shouldBe "Victor Osimhen"
+        premierLeaguePlayers[0].totalGoal shouldBe 22
+        premierLeaguePlayers[0].team.name shouldBe "Napoli"
+        premierLeaguePlayers[0].team.rank shouldBe 1
+
+        // Verify first league has no players
+        leagues[0].players shouldBe emptyList()
+    }
+
+    @Test
+    fun `given leagues JSON, when sorting strategy is None, then maintains API order with full data`() = runTest {
+        mockWebServer.enqueueResponse("leagues-200.json", 200)
+
+        val result = repository.getLeagues(
+            page = 1,
+            limit = 10,
+            sortingStrategy = LeagueListSortingStrategy.None
+        )
+
+        val leagues = (result as Result.Success).data.data
+        leagues.map { it.league.name } shouldBe listOf(
+            "La Liga", "Premier League", "Bundesliga"
+        )
+
+        // Check first league's first player
+        val laLigaPlayers = leagues[0].players
+        laLigaPlayers.size shouldBe 5
+        laLigaPlayers[0].name shouldBe "Arnaud Kalimuendo"
+        laLigaPlayers[0].totalGoal shouldBe 17
+        laLigaPlayers[0].team.name shouldBe "Rennes"
+        laLigaPlayers[0].team.rank shouldBe 3
+    }
+
 }

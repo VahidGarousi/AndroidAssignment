@@ -149,4 +149,61 @@ internal class PlayerRepositoryImplTest {
 
         result shouldBe Result.Failure(DataError.Network.SERIALIZATION)
     }
+
+    @Test
+    fun `given multiple leagues with players, when sorted ascending by rank, then returns sorted leagues with full player data`() = runTest {
+        val apiResponse = listOf(
+            LeagueListItemDto(
+                LeagueDto("CountryZ", "Z League", 2, 38),
+                listOf(PlayerDto("PlayerZ1", TeamDto("TeamZ1", 1), 10))
+            ),
+            LeagueListItemDto(
+                LeagueDto("CountryA", "A League", 1, 38),
+                listOf(PlayerDto("PlayerA1", TeamDto("TeamA1", 2), 12))
+            ),
+            LeagueListItemDto(
+                LeagueDto("CountryM", "M League", 3, 38),
+                listOf(PlayerDto("PlayerM1", TeamDto("TeamM1", 3), 8))
+            )
+        )
+        coEvery { apiService.getLeagueList() } returns apiResponse
+
+        val result = repository.getLeagues(
+            page = 1,
+            limit = 10,
+            sortingStrategy = LeagueListSortingStrategy.ByLeagueRanking(LeagueListSortingStrategy.Direction.ASCENDING)
+        )
+
+        val leagues = (result as Result.Success).data.data
+
+        // Verify league order
+        leagues.map { it.league.name } shouldBe listOf("A League", "Z League", "M League")
+
+        // Verify first league's player
+        val firstLeaguePlayers = leagues[0].players
+        firstLeaguePlayers.size shouldBe 1
+        firstLeaguePlayers[0].name shouldBe "PlayerA1"
+        firstLeaguePlayers[0].totalGoal shouldBe 12
+        firstLeaguePlayers[0].team.name shouldBe "TeamA1"
+        firstLeaguePlayers[0].team.rank shouldBe 2
+
+        // Verify second league's player
+        val secondLeaguePlayers = leagues[1].players
+        secondLeaguePlayers.size shouldBe 1
+        secondLeaguePlayers[0].name shouldBe "PlayerZ1"
+        secondLeaguePlayers[0].totalGoal shouldBe 10
+        secondLeaguePlayers[0].team.name shouldBe "TeamZ1"
+        secondLeaguePlayers[0].team.rank shouldBe 1
+
+        // Verify third league's player
+        val thirdLeaguePlayers = leagues[2].players
+        thirdLeaguePlayers.size shouldBe 1
+        thirdLeaguePlayers[0].name shouldBe "PlayerM1"
+        thirdLeaguePlayers[0].totalGoal shouldBe 8
+        thirdLeaguePlayers[0].team.name shouldBe "TeamM1"
+        thirdLeaguePlayers[0].team.rank shouldBe 3
+
+        coVerify(exactly = 1) { apiService.getLeagueList() }
+    }
+
 }

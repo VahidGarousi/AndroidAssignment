@@ -12,6 +12,8 @@ import ir.miare.core.domain.model.PaginatedResult
 import ir.miare.feature.player.domain.model.League
 import ir.miare.feature.player.domain.model.LeagueList
 import ir.miare.feature.player.domain.model.LeagueListSortingStrategy
+import ir.miare.feature.player.domain.model.Player
+import ir.miare.feature.player.domain.model.Team
 import ir.miare.feature.player.domain.repository.PlayerRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -148,4 +150,88 @@ internal class GetLeagueListUseCaseTest {
             thrown shouldBe exception
             coVerify(exactly = 1) { repository.getLeagues(1, 10, LeagueListSortingStrategy.None) }
         }
+
+    @Test
+    fun `given repository returns leagues with players, when sorting by ranking ascending, then result is sorted with players`() =
+        runTest {
+            // Arrange
+            val sortedAsc = PaginatedResult(
+                data = listOf(
+                    LeagueList(
+                        League(
+                            name = "A League",
+                            country = "CountryA",
+                            rank = 1,
+                            totalMatches = 38
+                        ),
+                        players = listOf(
+                            Player(name = "PlayerA1", team = Team("TeamA1", 1), totalGoal = 10),
+                            Player(
+                                name = "PlayerA2",
+                                team = Team(name = "TeamA2", rank = 2),
+                                totalGoal = 12
+                            )
+                        )
+                    ),
+                    LeagueList(
+                        League(
+                            name = "Z League",
+                            country = "CountryZ", rank = 2, totalMatches = 38
+                        ),
+                        players = listOf(
+                            Player("PlayerZ1", Team("TeamZ1", 1), 15)
+                        )
+                    )
+                ),
+                totalPages = 1
+            )
+
+            coEvery {
+                repository.getLeagues(
+                    1,
+                    10,
+                    LeagueListSortingStrategy.ByLeagueRanking(LeagueListSortingStrategy.Direction.ASCENDING)
+                )
+            } returns Result.Success(sortedAsc)
+
+            // Act
+            val result = getLeagueListUseCase(
+                page = 1,
+                limit = 10,
+                sortingStrategy = LeagueListSortingStrategy.ByLeagueRanking(
+                    LeagueListSortingStrategy.Direction.ASCENDING
+                )
+            ) as Result.Success
+
+            // Assert league order
+            result.data.data.map {
+                it.league.name
+            } shouldBe listOf("A League", "Z League")
+
+            // Assert players in first league
+            val firstLeaguePlayers = result.data.data[0].players
+            firstLeaguePlayers.size shouldBe 2
+            firstLeaguePlayers[0].name shouldBe "PlayerA1"
+            firstLeaguePlayers[0].team.name shouldBe "TeamA1"
+            firstLeaguePlayers[0].totalGoal shouldBe 10
+            firstLeaguePlayers[1].name shouldBe "PlayerA2"
+            firstLeaguePlayers[1].team.name shouldBe "TeamA2"
+            firstLeaguePlayers[1].totalGoal shouldBe 12
+
+            // Assert players in second league
+            val secondLeaguePlayers = result.data.data[1].players
+            secondLeaguePlayers.size shouldBe 1
+            secondLeaguePlayers[0].name shouldBe "PlayerZ1"
+            secondLeaguePlayers[0].team.name shouldBe "TeamZ1"
+            secondLeaguePlayers[0].totalGoal shouldBe 15
+
+            coVerify(exactly = 1) {
+                repository.getLeagues(
+                    1,
+                    10,
+                    LeagueListSortingStrategy.ByLeagueRanking(LeagueListSortingStrategy.Direction.ASCENDING)
+                )
+            }
+        }
+
 }
