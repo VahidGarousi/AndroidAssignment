@@ -1,5 +1,6 @@
 package ir.miare.core.ui.paginator.manager
 
+import ir.miare.core.common.util.DataError
 import ir.miare.core.common.util.fold
 import ir.miare.core.ui.paginator.state.PaginatedState
 import ir.miare.core.ui.paginator.strategy.PaginationStrategy
@@ -32,8 +33,8 @@ class PaginationManager<T>(
                     ),
                 )
             },
-            onFailure = { error ->
-                onStateUpdated(PaginatedState.Error(error.name))
+            onFailure = { error: DataError.Network ->
+                onStateUpdated(PaginatedState.Error(message = error))
             },
         )
 

@@ -1,5 +1,6 @@
 package ir.miare.core.ui.paginator.state
 
+import ir.miare.core.common.util.AppError
 import kotlinx.collections.immutable.ImmutableList
 
 sealed class PaginatedState<out T> {
@@ -23,7 +24,7 @@ sealed class PaginatedState<out T> {
     ) : PaginatedState<T>()
 
     data class Error(
-        val message: String,
+        val message: AppError,
     ) : PaginatedState<Nothing>() {
         override val data: ImmutableList<Nothing>? = null
     }

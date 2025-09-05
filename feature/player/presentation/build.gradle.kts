@@ -22,17 +22,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(projects.feature.player.domain)
 
-    testImplementation(libs.junit5.api)
-    testImplementation(libs.junit5.params)
-    testImplementation(libs.kotest.assertions.core)
-    testImplementation(libs.kotest.framework.api)
-    testImplementation(libs.kotest.runner.junit5)
-    // MockK temperately
-    testImplementation(libs.mockk)
-    testImplementation(libs.mockk.agent)
-    testImplementation(libs.turbine)
-
-    testRuntimeOnly(libs.junit5.engine)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.test.ext)
