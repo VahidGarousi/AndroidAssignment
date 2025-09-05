@@ -8,7 +8,7 @@ import ir.miare.core.common.util.DataError
 import ir.miare.core.common.util.Result
 import ir.miare.core.domain.model.PaginatedResult
 import ir.miare.core.ui.paginator.state.PaginatedState
-import ir.miare.feature.player.domain.GetLeagueListUseCase
+import ir.miare.feature.player.domain.usecase.GetLeagueListUseCase
 import ir.miare.feature.player.domain.model.League
 import ir.miare.feature.player.presentation.list.LeagueFakeGenerator.league
 import kotlinx.collections.immutable.toImmutableList
@@ -95,7 +95,12 @@ internal class PlayerListViewModelTest {
     inner class LoadNextPageFailureTests {
         @Test
         fun `when load next page fails, should emit InitialLoading then Error`() = runTest {
-            coEvery { getLeagueListUseCase(any(), any()) } returns Result.Failure(DataError.Network.NO_INTERNET)
+            coEvery {
+                getLeagueListUseCase(
+                    any(),
+                    any()
+                )
+            } returns Result.Failure(DataError.Network.NO_INTERNET)
 
             viewModel.uiState.test {
                 awaitItem().paginatedLeagues shouldBe PaginatedState.NotLoaded
@@ -106,28 +111,34 @@ internal class PlayerListViewModelTest {
         }
 
         @Test
-        fun `when next page fails after first page, should emit LoadingMore then Error`() = runTest {
-            val firstPage = PaginatedResult(
-                data = listOf(league("La Liga", "Spain", 1, 38)),
-                totalPages = 2
-            )
-            coEvery { getLeagueListUseCase(1, any()) } returns Result.Success(firstPage)
-            coEvery { getLeagueListUseCase(2, any()) } returns Result.Failure(DataError.Network.NO_INTERNET)
-
-            viewModel.uiState.test {
-                awaitItem() // NotLoaded
-                viewModel.onAction(PlayerListAction.LoadNextPage)
-                awaitItem() // InitialLoading
-                awaitItem().paginatedLeagues shouldBe PaginatedState.Loaded(
-                    data = firstPage.data.toImmutableList(),
-                    isEndReached = false
+        fun `when next page fails after first page, should emit LoadingMore then Error`() =
+            runTest {
+                val firstPage = PaginatedResult(
+                    data = listOf(league("La Liga", "Spain", 1, 38)),
+                    totalPages = 2
                 )
+                coEvery { getLeagueListUseCase(1, any()) } returns Result.Success(firstPage)
+                coEvery {
+                    getLeagueListUseCase(
+                        2,
+                        any()
+                    )
+                } returns Result.Failure(DataError.Network.NO_INTERNET)
 
-                viewModel.onAction(PlayerListAction.LoadNextPage)
-                awaitItem().paginatedLeagues shouldBe PaginatedState.LoadingMore(firstPage.data.toImmutableList())
-                awaitItem().paginatedLeagues shouldBe PaginatedState.Error(DataError.Network.NO_INTERNET)
+                viewModel.uiState.test {
+                    awaitItem() // NotLoaded
+                    viewModel.onAction(PlayerListAction.LoadNextPage)
+                    awaitItem() // InitialLoading
+                    awaitItem().paginatedLeagues shouldBe PaginatedState.Loaded(
+                        data = firstPage.data.toImmutableList(),
+                        isEndReached = false
+                    )
+
+                    viewModel.onAction(PlayerListAction.LoadNextPage)
+                    awaitItem().paginatedLeagues shouldBe PaginatedState.LoadingMore(firstPage.data.toImmutableList())
+                    awaitItem().paginatedLeagues shouldBe PaginatedState.Error(DataError.Network.NO_INTERNET)
+                }
             }
-        }
     }
 
     @Nested
