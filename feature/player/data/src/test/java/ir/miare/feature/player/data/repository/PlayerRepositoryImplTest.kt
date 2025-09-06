@@ -57,7 +57,13 @@ internal class PlayerRepositoryImplTest {
                 data = listOf(
                     LeagueList(
                         league = League(name = "La Liga", country = "Spain", rank = 1, totalMatches = 38),
-                        players = listOf(Player(name = "Player1", team = Team("Team1", 1), totalGoal = 10))
+                        teams = listOf(
+                            Team(
+                                name = "Team1",
+                                rank = 1,
+                                players = listOf(Player(name = "Player1", totalGoal = 10))
+                            )
+                        )
                     )
                 ),
                 totalPages = 2
@@ -179,29 +185,29 @@ internal class PlayerRepositoryImplTest {
         // Verify league order
         leagues.map { it.league.name } shouldBe listOf("A League", "Z League", "M League")
 
-        // Verify first league's player
-        val firstLeaguePlayers = leagues[0].players
-        firstLeaguePlayers.size shouldBe 1
-        firstLeaguePlayers[0].name shouldBe "PlayerA1"
-        firstLeaguePlayers[0].totalGoal shouldBe 12
-        firstLeaguePlayers[0].team.name shouldBe "TeamA1"
-        firstLeaguePlayers[0].team.rank shouldBe 2
+        // Verify first league's team + player
+        val firstLeagueTeams = leagues[0].teams
+        firstLeagueTeams.size shouldBe 1
+        firstLeagueTeams[0].name shouldBe "TeamA1"
+        firstLeagueTeams[0].rank shouldBe 2
+        firstLeagueTeams[0].players[0].name shouldBe "PlayerA1"
+        firstLeagueTeams[0].players[0].totalGoal shouldBe 12
 
-        // Verify second league's player
-        val secondLeaguePlayers = leagues[1].players
-        secondLeaguePlayers.size shouldBe 1
-        secondLeaguePlayers[0].name shouldBe "PlayerZ1"
-        secondLeaguePlayers[0].totalGoal shouldBe 10
-        secondLeaguePlayers[0].team.name shouldBe "TeamZ1"
-        secondLeaguePlayers[0].team.rank shouldBe 1
+        // Verify second league's team + player
+        val secondLeagueTeams = leagues[1].teams
+        secondLeagueTeams.size shouldBe 1
+        secondLeagueTeams[0].name shouldBe "TeamZ1"
+        secondLeagueTeams[0].rank shouldBe 1
+        secondLeagueTeams[0].players[0].name shouldBe "PlayerZ1"
+        secondLeagueTeams[0].players[0].totalGoal shouldBe 10
 
-        // Verify third league's player
-        val thirdLeaguePlayers = leagues[2].players
-        thirdLeaguePlayers.size shouldBe 1
-        thirdLeaguePlayers[0].name shouldBe "PlayerM1"
-        thirdLeaguePlayers[0].totalGoal shouldBe 8
-        thirdLeaguePlayers[0].team.name shouldBe "TeamM1"
-        thirdLeaguePlayers[0].team.rank shouldBe 3
+        // Verify third league's team + player
+        val thirdLeagueTeams = leagues[2].teams
+        thirdLeagueTeams.size shouldBe 1
+        thirdLeagueTeams[0].name shouldBe "TeamM1"
+        thirdLeagueTeams[0].rank shouldBe 3
+        thirdLeagueTeams[0].players[0].name shouldBe "PlayerM1"
+        thirdLeagueTeams[0].players[0].totalGoal shouldBe 8
 
         coVerify(exactly = 1) { apiService.getLeagueList() }
     }

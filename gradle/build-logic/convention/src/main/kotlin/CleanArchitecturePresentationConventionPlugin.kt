@@ -37,6 +37,9 @@ class CleanArchitecturePresentationConventionPlugin : Plugin<Project> {
             "testImplementation"(libs.findLibrary("mockk").get())
             "testImplementation"(libs.findLibrary("mockk.agent").get())
             "testImplementation"(libs.findLibrary("turbine").get())
+
+            "androidTestImplementation"(libs.findBundle("androidx.compose.ui.test").get())
+            "androidTestImplementation"(libs.findLibrary("androidx.test.rules").get())
         }
     }
 }

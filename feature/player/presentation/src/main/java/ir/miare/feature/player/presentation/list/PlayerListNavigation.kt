@@ -5,7 +5,7 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data object PlayerListRoute
+internal data object PlayerListRoute  // route to Player list screen
 
 internal fun NavGraphBuilder.playerList() {
     composable<PlayerListRoute> {

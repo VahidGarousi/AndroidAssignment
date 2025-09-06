@@ -15,11 +15,9 @@ class GetLeagueListUseCase @Inject constructor(
         page: Int,
         limit: Int,
         sortingStrategy: LeagueListSortingStrategy
-    ): Result<PaginatedResult<LeagueList>, DataError.Network> {
-        return repository.getLeagues(
-            page = page,
-            limit = limit,
-            sortingStrategy = sortingStrategy
-        )
-    }
+    ): Result<PaginatedResult<LeagueList>, DataError.Network> = repository.getLeagues(
+        page = page,
+        limit = limit,
+        sortingStrategy = sortingStrategy
+    )
 }

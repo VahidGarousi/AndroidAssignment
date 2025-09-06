@@ -35,7 +35,11 @@ class PlayerListViewModel @Inject constructor(
                 }
             )
         ) { newState ->
-            _uiState.update { it.copy(paginatedLeagues = newState) }
+             _uiState.update {
+                 it.copy(
+                     paginatedLeagues = newState
+                 )
+             }
         }
     }
 
@@ -46,7 +50,9 @@ class PlayerListViewModel @Inject constructor(
         }
     }
 
-    private fun changeSortingStrategy(strategy: LeagueListSortingStrategy) {
+    private fun changeSortingStrategy(
+        strategy: LeagueListSortingStrategy
+    ) {
         _uiState.update {
             it.copy(
                 sortingStrategy = strategy,

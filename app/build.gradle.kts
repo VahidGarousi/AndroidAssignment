@@ -61,4 +61,10 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
 
     ksp(libs.hilt.compiler)
+
+    implementation(projects.core.data)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.domain)
+    implementation(projects.core.network)
+    implementation(projects.core.ui)
 }
