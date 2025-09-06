@@ -44,6 +44,11 @@ dependencies {
     implementation(libs.hilt.core)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
+    implementation(projects.core.data)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.domain)
+    implementation(projects.core.network)
+    implementation(projects.core.ui)
     implementation(projects.feature.player.data)
     implementation(projects.feature.player.domain)
     implementation(projects.feature.player.presentation)
@@ -61,10 +66,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
 
     ksp(libs.hilt.compiler)
-
-    implementation(projects.core.data)
-    implementation(projects.core.designsystem)
-    implementation(projects.core.domain)
-    implementation(projects.core.network)
-    implementation(projects.core.ui)
 }
